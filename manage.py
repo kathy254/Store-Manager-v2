@@ -24,16 +24,16 @@ def create_default_administrator(self):
     curr = self.cursor()
     query = "SELECT * FROM users WHERE role=%s" 
     curr.execute(query,('Admin',))
-    admin = curr.fetchone()
-    if not admin:
+    Admin = curr.fetchone()
+    if not Admin:
         query = "INSERT INTO users(first_name, last_name, email_address, password, role)\
          VALUES(%s, %s, %s, %s, %s)"
         curr.execute(query, ('Store', 'Owner', 'store.admin@storemanager.com', 'admin254', 'Admin'))
         con.commit()
 
 
-def dbcommit(self):
-    """A method that commits all changes to the database"""
+def db_init(self):
+    """A method that initializes the database connection"""
     con = self.connection
     con.commit()
     return con
