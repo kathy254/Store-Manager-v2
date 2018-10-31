@@ -37,14 +37,13 @@ def create_default_administrator(self):
     """Create a default administrator account"""
     con = self.connection()
     curr = self.cursor()
-    password = 'admin254'
     query = "SELECT * FROM users WHERE email_address=%s" 
     curr.execute(query,('store.admin@storemanager.com',))
     admin = curr.fetchone()
     if not admin:
         query = "INSERT INTO users(first_name, last_name, email_address, password, role)\
          VALUES(%s, %s, %s, %s, %s)"
-        curr.execute(query, ('Store', 'Owner', 'store.admin@storemanager.com', password, 'admin'))
+        curr.execute(query, ('Store', 'Owner', 'store.admin@storemanager.com', 'admin254', 'admin'))
         con.commit()
 
 
