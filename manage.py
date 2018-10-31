@@ -18,39 +18,25 @@ def connection(config):
     return con
 
 
-def create_database(self):
-    """Create tables in the PostgreSQL database"""
-    con = self.connection()
-    curr = self.cursor()
-    queries = self.tables()
-    try:
-        for query in queries:
-            curr = con.cursor
-            curr.execute(query)
-            con.commit()
-            print('Admin account created')
-    except psycopg2.Error as e:
-        print(e.pgerror)
-
-
 def create_default_administrator(self):
     """Create a default administrator account"""
     con = self.connection()
     curr = self.cursor()
-    query = "SELECT * FROM users WHERE email_address=%s" 
-    curr.execute(query,('store.admin@storemanager.com',))
+    query = "SELECT * FROM users WHERE role=%s" 
+    curr.execute(query,('Admin',))
     admin = curr.fetchone()
     if not admin:
         query = "INSERT INTO users(first_name, last_name, email_address, password, role)\
          VALUES(%s, %s, %s, %s, %s)"
-        curr.execute(query, ('Store', 'Owner', 'store.admin@storemanager.com', 'admin254', 'admin'))
+        curr.execute(query, ('Store', 'Owner', 'store.admin@storemanager.com', 'admin254', 'Admin'))
         con.commit()
 
 
-def commit(self):
+def dbcommit(self):
     """A method that commits all changes to the database"""
     con = self.connection
     con.commit()
+    return con
 
 
 def db_tables(self):
