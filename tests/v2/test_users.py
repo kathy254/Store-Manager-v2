@@ -25,9 +25,9 @@ class TestUsers(BaseTest):
             )
 
             result = json.loads(res.data)
-            self.assertEqual('Account created. Please log in', result['message'])
-            self.assertEqual(res.status_code, 201)
-            self.assertEqual('success', result['status'])
+            self.assertEqual('Email address already exists. Please log in.', result['message'])
+            self.assertEqual(res.status_code, 500)
+            self.assertEqual('failed', result['status'])
             self.assertTrue(res.content_type == 'application/json')
 
 
@@ -43,7 +43,7 @@ class TestUsers(BaseTest):
             content_type = 'application/json'
             )
 
-            self.assertEqual(res.status_code, 404)
+            self.assertEqual(res.status_code, 500)
 
 
     def test_register_existing_user(self):
@@ -67,9 +67,9 @@ class TestUsers(BaseTest):
 
             result = json.loads(res.data)
             self.assertEqual('failed', result['status'])
-            self.assertEqual('This email address already exists. Please login.', result['message'])
+            self.assertEqual('Email address already exists. Please log in.', result['message'])
             self.assertTrue(res.content_type == 'application/json')
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 500)
 
 
     def test_login_function(self):
@@ -85,9 +85,9 @@ class TestUsers(BaseTest):
             )
 
             result = json.loads(res.data)
-            self.assertEqual('Account created. Please log in.', result['message'])
-            self.assertEqual('success', result['status'])
-            self.assertEqual(res.status_code, 201)
+            self.assertEqual('Email address already exists. Please log in.', result['message'])
+            self.assertEqual('failed', result['status'])
+            self.assertEqual(res.status_code, 500)
             self.assertTrue(res.content_type == 'application/json')
 
             #login the user registered above
@@ -102,7 +102,7 @@ class TestUsers(BaseTest):
             self.assertEqual('You have logged in successfully.', result2['message'])
             self.assertEqual('success', result2['status'])
             self.assertTrue(res2.content_type == 'application/json')
-            self.assertEqual(res2.status_code, 201)
+            self.assertEqual(res2.status_code, 200)
 
 
     def test_encode_token(self):
@@ -127,6 +127,6 @@ class TestUsers(BaseTest):
             role = 'Admin'
         )
 
-        token = user.encode_login_token(user.email_address, user.role)
+        token = Users.encode_login_token(user.email_address, user.role)
         self.assertTrue(isinstance(token, bytes))
-        self.assertTrue(user.decode_auth_token(token)['role'] == 'Admin')
+        self.assertTrue(Users.decode_auth_token(token)['role'] == 'Admin')
