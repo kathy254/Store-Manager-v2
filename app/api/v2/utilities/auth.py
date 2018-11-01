@@ -16,7 +16,7 @@ def token_required(f):
             return {'result': 'No token found'}, 401
 
         try:
-            token = jwt.decode(token, secret_key, algorithms='HS256'), 401
+            token = jwt.decode(token, 'notsosecret', algorithms='HS256'), 401
         except:
             return {'result': 'Invalid token'}, 401
         return f(*args, **kwargs)

@@ -45,7 +45,8 @@ class RegisterStoreAttendant(Resource):
         if email_found == {'message': 'No records found'}:
             
             try:
-                new_user = Users(first_name, last_name, email_address, password, role)
+                user = Users(first_name, last_name, email_address, password, role)
+                new_user = user.register_new_user()
                 return make_response(jsonify({
                     'status': 'success',
 					'message': 'Account created. Please log in',
@@ -86,9 +87,9 @@ class LoginUsers(Resource):
                 return make_response(jsonify({
                     'status': 'failed',
                     'message': 'Email address not found. Please sign up.'
-                }), 200)
+                }), 404)
 
-            if current_user and password:
+            if current_user['password'] and current_user['email_address']:
                 role = current_user['role']
                 email_address = current_user['email_address']
                 token = Users.encode_login_token(email_address, role)
