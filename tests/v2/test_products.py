@@ -1,46 +1,88 @@
-#library imports
-import psycopg2
-
-#local imports
+# Library imports
+import json
+# Local application imports
 from .base_test import BaseTest
-from app.api.v2.models.products_models import Products
 
-
-login_url = '/api/v2/auth/login'
-registration_url = 'api/v2/auth/signup'
-products_url = 'api/v2/products'
-
-class TestProductsFunction(unittest.TestCase):
-    #Data
-
-    Product1 = {
-        'productId': 1,
-        'category': "Men's clothes",
-        'Product_name': 'Tom Ford Suit',
-        'Quantity': 30,
-        'Price': 1000
+login_url = "/api/v2/auth/login"
+reg_url = "/api/v2/auth/signup"
+products_url = "/api/v2/products"
+class TestGetProducts(BaseTest):
+	"""
+    Product data
+    """
+	product_data = {
+        "product_name": "Shaving",
+        "category": "Electronics",
+        "quantity": 5,
+        "reorder_level": 3,
+        "price": 7999
     }
-
-
-    Product2 = {
-        'productId': 2,
-        'category': 'Ladies dresses',
-        'Product_name': 'Gucci dress',
-        'Quantity': 100,
-        'Price': 1000
+	
+	
+	product_data2 = {
+        "product_name": "Oreo",
+        "category": "Foodstuffs",
+        "quantity": 50,
+        "reorder_level": 10,
+        "price": 120
     }
-
-    Product3 = {
-        'productId': 3,
-        'category': 'Kids clothes',
-        'Product name': 'Zara',
-        'Quantity': 80,
-        'Price': 800
+	
+	
+	product_data3 = {
+        "product_name": "Gentle",
+        "category": "Detergents",
+        "quantity": 50,
+        "reorder_level": 5,
+        "price": 150
     }
-
-
-    def test_post_product(self):
-        with self.client():
-            res = self.client().post(registration_url, data=json.dumps(dict(
-                
-            )))
+	
+	
+	def test_post_product(self):
+		"""Test for a successful post"""
+		with self.client():
+			self.test_user_registration()
+			resp = self.test_user_registration()
+			
+			res = json.loads(resp.data.decode())
+			token = res['token']
+			post_product = self.client().post(products_url, headers=dict(Authorization="Bearer {}".format(token)),
+			           data = self.product_data)
+			result = json.loads(post_product.data)
+			self.assertEqual('product created successfully', result['message'])
+			self.assertEqual(post_product.status_code, 201)
+			
+			
+	def test_get_products(self):
+		"""
+        Test endpoint to get all products
+        """
+		with self.client():
+			self.test_user_registration()
+			resp = self.test_user_registration()
+			
+			token = json.loads(resp.data.decode())['token']
+			post_product = self.client().post(products_url, headers=dict(Authorization="Bearer {}".format(token)), 
+            data=self.product_data3)
+			result = json.loads(post_product.data)
+			self.assertEqual(post_product.status_code, 201)
+			self.assertEqual('product created successfully', result['message'])
+			fetch_products = self.client().get(products_url)
+			self.assertEqual(fetch_products.status_code, 200)
+            
+			
+	def test_single_product(self):
+		"""
+        Test endpoint to get a single product
+        """
+		with self.client():
+			self.test_user_registration()
+			resp = self.test_user_login()
+			
+			token = json.loads(resp.data.decode())['token']
+			post_product = self.client().post(products_url, headers=dict(Authorization="Bearer {}".format(token)), 
+			       data=self.product_data2)
+			result = json.loads(post_product.data)
+			self.assertEqual(post_product.status_code, 201)
+			self.assertEqual('product created successfully', result['message'])
+			single_product = self.client().get('/api/v1/products/{}'.format(result['product']['product_id']))
+			self.assertEqual(single_product.status_code, 200)

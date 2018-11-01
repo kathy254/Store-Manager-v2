@@ -61,12 +61,12 @@ class Users(Verify):
     def get_user_by_email(email_address):
         #retrieve a user by email address
         query = """
-                    SELECT * FROM users where email_address=%s;
+                    SELECT * FROM users WHERE email_address=%s;
                 """
-
+        
         con = psycopg2.connect(db_url)
         cur = con.cursor(cursor_factory = RealDictCursor)
-        cur.execute(query, (email_address, ))
+        cur.execute(query, (email_address,))
         user = cur.fetchone()
         if user:
             return user
@@ -111,7 +111,7 @@ class Users(Verify):
 
             token = jwt.encode(
                 payload,
-                secret_key,
+                'notsosecret',
                 algorithm='HS256'
             )
 
@@ -126,7 +126,7 @@ class Users(Verify):
     def decode_auth_token(token):
         #This method decodes the authorization token
         try:
-            payload = jwt.decode(token, secret_key, options={'verify_iat': False})
+            payload = jwt.decode(token, 'notsosecret', options={'verify_iat': False})
             return payload
         except jwt.ExpiredSignatureError:
             return {'message': 'Signature expired. Please log in again.'}
