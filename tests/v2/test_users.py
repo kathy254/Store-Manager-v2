@@ -103,3 +103,30 @@ class TestUsers(BaseTest):
             self.assertEqual('success', result2['status'])
             self.assertTrue(res2.content_type == 'application/json')
             self.assertEqual(res2.status_code, 201)
+
+
+    def test_encode_token(self):
+        user = Users(
+            first_name = 'Store',
+            last_name = 'Owner',
+            email_address = 'store.admin@storemanager.com',
+            password = 'admin254',
+            role = 'Admin'
+        )
+
+        token = user.encode_login_token(user.email_address, user.role)
+        self.assertTrue(isinstance(token, bytes))
+
+
+    def test_decode_token(self):
+        user = Users(
+            first_name = 'Store',
+            last_name = 'Owner',
+            email_address = 'store.admin@storemanager.com',
+            password = 'admin254',
+            role = 'Admin'
+        )
+
+        token = user.encode_login_token(user.email_address, user.role)
+        self.assertTrue(isinstance(token, bytes))
+        self.assertTrue(user.decode_auth_token(token)['role'] == 'Admin')
