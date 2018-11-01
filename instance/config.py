@@ -41,3 +41,4 @@ app_config = {
 
 
 secret_key = Config.SECRET_KEY
+db_url = "dbname='store_tests' host='127.0.0.1' port='5432' user='catherine_store' password='admin'"
