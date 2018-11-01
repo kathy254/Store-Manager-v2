@@ -14,12 +14,14 @@ parser.add_argument('password', help='This field cannot be blank')
 
 
 store_users = Namespace('auth', description='Users endpoints')
-mod_register = store_users.model('register store attendant',{
+
+
+mod_register = store_users.model('register store attendant', {
 	'first_name':fields.String('attendant\'s first name'),
 	'last_name': fields.String('attendants\'s last name'),
 	'email_address': fields.String('attendant\'s email'),
-	'role': fields.String('attendant\'s role'),
-	'password': fields.String('attendant\'s password')
+	'password': fields.String('attendant\'s password'),
+    'role': fields.String('attendant\'s role')
 	})
 
 
@@ -28,8 +30,6 @@ class RegisterStoreAttendant(Resource):
     @store_users.doc(security='apikey')
     @store_users.expect(mod_register)
 
-    def __init__(self):
-        self.user = Users()
 
     def post(self):
         args = parser.parse_args()
@@ -40,12 +40,12 @@ class RegisterStoreAttendant(Resource):
         role = args['role']
         
         
-        email_found = self.user.get_user_by_email_address(email_address)
+        email_found = Users.get_user_by_email(email_address)
         
-        if email_found == 'User not found':
+        if email_found == {'message': 'No records found'}:
             
             try:
-                new_user = Users(first_name, last_name, email_address, Users.generate_hash(password), role)
+                new_user = Users(first_name, last_name, email_address, password, role)
                 return make_response(jsonify({
                     'status': 'success',
 					'message': 'Account created. Please log in',
