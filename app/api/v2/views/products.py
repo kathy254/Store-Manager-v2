@@ -3,6 +3,11 @@ from flask_restplus import Namespace, reqparse, Resource, fields, Api
 
 from ..utilities.auth import token_required, admin_required
 from ..models.products_models import Products
+from ..models.user_models import Users
+
+
+store_product = Namespace('products', description='Products Endpoint', path='api/v2/products')
+
 
 parser=reqparse.RequestParser()
 parser.add_argument('productId', help='This field cannot be blank')
@@ -12,7 +17,6 @@ parser.add_argument('Quantity', help='This field cannot be blank')
 parser.add_argument('Price', help='This field cannot be blank')
 
 
-store_product = Namespace('products', description='Products Endpoint')
 
 mod = store_product.model('product model', {
     'productId': fields.Integer(description='Product ID'),
@@ -23,7 +27,7 @@ mod = store_product.model('product model', {
 })
 
 
-@store_product.route(' ')
+@store_product.route('')
 class AllProducts(Resource):
     @store_product.doc(security='apikey')
     @store_product.expect(mod)
@@ -45,7 +49,7 @@ class AllProducts(Resource):
             return make_response(jsonify({
                 'message': 'This product already exists. Do you want to edit it?'
             }))
-
+        
         product = Products(productId, category, Product_name, Quantity, Price)
         new_product = product.add_product()
         return make_response(jsonify({
@@ -73,7 +77,7 @@ def get(self):
     }), 200)
 
 
-@store_product.route('/<int:productId')
+@store_product.route('/<int:productId>')
 class GetProductById(Resource):
     #this function gets a single product by its ID
     @store_product.doc(security='apikey')
@@ -98,18 +102,18 @@ class GetProductById(Resource):
     def put(self, product_id):
         """ Create a new product """
         args = parser.parse_args()
-        product_name = args['product_name']
+        productId = args['productId']
         category = args['category']
-        quantity = args['quantity']
-        reorder_level = args['reorder_level']
-        price = args['price']
+        Product_name = args['Product_name']
+        Quantity = args['Quantity']
+        Price = args['Price']
 
         find_product = Products.get_product_by_name
         if find_product:
             return make_response(jsonify({
                 'message': 'This product already exists. Do you want to edit it?'
             }))
-        up_product = Products(product_name, category, quantity, reorder_level, price)
+        up_product = Products(productId, category, Product_name, Quantity, Price)
         updated_product = up_product.update_product(product_id)
         return make_response(jsonify({
             'status': 'ok',
