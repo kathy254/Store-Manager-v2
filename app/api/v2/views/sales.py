@@ -1,13 +1,10 @@
-from flask import request, make_response, jsonify
-from flask_restplus import Namespace, Resource, fields, reqparse
+from flask import request, make_response, jsonify, Blueprint, json, jsonify
+from flask_restplus import Namespace, Resource, fields, reqparse, Api
 
 
 from ..models.sales_models import Sales
 from ..models.products_models import Products
 from ..utilities.auth import token_required
-
-
-store_sales = Namespace('sales', description='Sales Endpoints', path='api/v2/sales')
 
 
 parser = reqparse.RequestParser()
@@ -17,9 +14,10 @@ parser.add_argument('Price', help = 'This field cannot be blank', required = Tru
 parser.add_argument('sellerId', help = 'This field cannot be blank', required = True)
 
 
-@store_sales.route('')
-class SaleRecord(Resource):
-    mod = store_sales.model('sales model', {
+store_sales = Namespace('sales', description='Sales Endpoints')
+
+
+mod = store_sales.model('sales model', {
         'productId': fields.Integer(description='Name of product sold'),
         'Quantity': fields.Integer(description='Quantity of product sold'),
         'Price': fields.Integer(description='Price of product sold'),
@@ -27,9 +25,12 @@ class SaleRecord(Resource):
         })
 
 
+@store_sales.route('')
+class SaleRecord(Resource):
     @store_sales.expect(mod)
     @store_sales.doc(security='apikey')
     @token_required
+    
     def post(self):
         #create a new sale record
         args = parser.parse_args()

@@ -18,7 +18,7 @@ class Products(Verify):
         
         
     def check_product_input(self):
-        strings=self.productId, self.Quantity, self.Price
+        strings=self.productId, self.category, self.Product_name, self.Quantity, self.Price
         payload = self.is_product_payload(strings)
         if payload is False:
             return {'result':'Payload is invalid'},406
@@ -37,12 +37,12 @@ class Products(Verify):
     def add_product(self):
         #this method adds a product to the inventory
             product = dict(
-            productId = self.productId,
-            category = self.category,
-            Product_name = self.Product_name,
-            Quantity = self.Quantity,
-            Price = self.Price
-        )
+                productId = self.productId,
+                category = self.category,
+                Product_name = self.Product_name,
+                Quantity = self.Quantity,
+                Price = self.Price
+            ) 
         
         
             query = """

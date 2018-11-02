@@ -14,5 +14,6 @@ def create_app(config):
     db.db_tables()
     app.register_blueprint(app_v2)
     app.config.from_object(app_config[config])
+    app.url_map.strict_slashes = False
     app.config['testing'] = True
     return app

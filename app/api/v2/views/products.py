@@ -6,7 +6,7 @@ from ..models.products_models import Products
 from ..models.user_models import Users
 
 
-store_product = Namespace('products', description='Products Endpoint', path='api/v2/products')
+store_product = Namespace('products', description='Products Endpoint')
 
 
 parser=reqparse.RequestParser()
@@ -132,6 +132,4 @@ class GetProductById(Resource):
             return make_response(jsonify({
                 'status': 'ok',
                 'message': 'product deleted successfully'
-            }))
-
-        
+}))

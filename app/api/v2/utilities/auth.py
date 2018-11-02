@@ -7,12 +7,12 @@ from instance.config import secret_key
 
 def admin_required(f):
     @wraps(f)
-    @classmethod
     def decorated(*args, **kwargs):
         token = None
         authentication_header = request.headers.get('Authorization')
         if authentication_header:
             try:
+                #get the role in token
                 token = authentication_header.split(" ")[1]
                 identity = Users.decode_auth_token(token)
 
@@ -39,7 +39,6 @@ def admin_required(f):
 
 def token_required(k):
     @wraps(k)
-    @classmethod
     def decorate_token(*args, **kwargs):
         token = None
         authentication_header = request.headers.get('Authorization')
