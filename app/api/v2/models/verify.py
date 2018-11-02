@@ -33,7 +33,7 @@ class Verify:
 
 
     def is_sales_payload(self, items):
-        res = self.payload(items, 3, ['productId', 'Quantity', 'Price'])
+        res = self.payload(items, 4, ['productId', 'Quantity', 'Price', 'sellerId'])
         return res
 
 

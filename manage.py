@@ -55,7 +55,7 @@ class DbSetup:
 
 
     def cursor(self):
-        #this method holds data temporarily while it's being from or to the database
+        #this method holds data temporarily while it's being taken from or to the database
         cursor = self.db_connection.cursor(cursor_factory=RealDictCursor)
         return cursor
 
