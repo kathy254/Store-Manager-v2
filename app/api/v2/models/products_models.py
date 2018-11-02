@@ -36,25 +36,25 @@ class Products(Verify):
             
     def add_product(self):
         #this method adds a product to the inventory
-        new_product = dict(
+            product = dict(
             productId = self.productId,
             category = self.category,
             Product_name = self.Product_name,
             Quantity = self.Quantity,
             Price = self.Price
         )
+        
+        
+            query = """
+                        INSERT INTO products(productId, category, Product_name, Quantity, Price)
+                        VALUES (%(productId)s, %(category)s, %(Product_name)s, %(Quantity)s, %(Price)s);
+                    """
 
-    
-        query = """
-                    INSERT INTO products(productId, category, Product_name, Quantity, Price)
-                    VALUES (%(productId)s, %(category)s, %(Product_name)s, %(Quantity)s, %(Price)s);
-                """
-
-        con = psycopg2.connect(db_url)
-        cur = con.cursor(cursor_factory = RealDictCursor)
-        cur.execute(query, new_product)
-        con.commit()
-        return new_product
+            con = psycopg2.connect(db_url)
+            cur = con.cursor(cursor_factory = RealDictCursor)
+            cur.execute(query, (product, ))
+            con.commit()
+            return product
         
         
     def get_all_products(self):
@@ -72,7 +72,7 @@ class Products(Verify):
         return {'message': 'No products found'}
         
         
-    def get_product_by_id(self, productId):
+    def get_product_by_id(self, productId, Quantity):
         query = """
                     SELECT * FROM products WHERE productId=%s;
                 """

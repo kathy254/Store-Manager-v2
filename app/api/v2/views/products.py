@@ -23,7 +23,7 @@ mod = store_product.model('product model', {
 })
 
 
-@store_product.route('')
+@store_product.route(' ')
 class AllProducts(Resource):
     @store_product.doc(security='apikey')
     @store_product.expect(mod)
